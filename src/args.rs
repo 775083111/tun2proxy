@@ -96,7 +96,7 @@ pub struct Args {
     pub udp_timeout: u64,
 
     /// Verbosity level [possible values: off, error, warn, info, debug, trace]
-    #[arg(short, long, value_name = "level", value_enum, default_value = "info")]
+    #[arg(short, long, value_name = "level", value_enum, default_value = "error")]
     pub verbosity: ArgVerbosity,
 
     /// Daemonize for unix family or run as Windows service

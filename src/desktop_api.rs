@@ -83,14 +83,14 @@ pub unsafe extern "C" fn tun2proxy_with_name_run(
 /// Run the tun2proxy component with some arguments.
 pub async fn desktop_run_async(args: Args, shutdown_token: tokio_util::sync::CancellationToken) -> std::io::Result<()> {
     let bypass_ips = args.bypass.clone();
-    let address: IpAddr = IpAddr::V4(Ipv4Addr::new(10, 10, 10, 88));
+    let address: IpAddr = IpAddr::V4(Ipv4Addr::new(10, 0, 0, 2));
     let netmask: IpAddr = IpAddr::V4(Ipv4Addr::new(255, 255, 255, 0));
-    let gateway: IpAddr = IpAddr::V4(Ipv4Addr::new(10, 10, 10, 1));
+    let gateway: IpAddr = IpAddr::V4(Ipv4Addr::new(10, 0, 0, 1));
 
     let mut tun_config = tun::Configuration::default();
     tun_config.address(address).netmask(netmask).mtu(1500).up();
     tun_config.destination(gateway);
-    tun_config.metric(50);
+    tun_config.metric(66);
     #[cfg(unix)]
     if let Some(fd) = args.tun_fd {
         tun_config.raw_fd(fd);
@@ -114,7 +114,7 @@ pub async fn desktop_run_async(args: Args, shutdown_token: tokio_util::sync::Can
 
     #[cfg(target_os = "windows")]
     tun_config.platform_config(|cfg| {
-        cfg.device_guid(12324323423423434234_u128);
+        cfg.device_guid(12321323423423431234_u128);
     });
 
     #[allow(unused_variables)]

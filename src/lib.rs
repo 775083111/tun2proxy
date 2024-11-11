@@ -161,8 +161,7 @@ pub async fn run<D>(device: D, mtu: u16, args: Args, shutdown_token: Cancellatio
 where
     D: AsyncRead + AsyncWrite + Unpin + Send + 'static,
 {
-    log::info!("{} {} starting...", env!("CARGO_PKG_NAME"), env!("CARGO_PKG_VERSION"));
-    log::info!("Proxy {} server: {}", args.proxy.proxy_type, args.proxy.addr);
+    log::info!("--- proxy is starting ,use [Crtl + C] exit ---");
 
     let server_addr = args.proxy.addr;
     let key = args.proxy.credentials.clone();
@@ -359,7 +358,7 @@ where
                             None => dst.into(),
                         };
                         if let Err(e) = handle_udp_gateway_session(udp, udpgw, &dst_addr, proxy_handler, queue, ipv6_enabled).await {
-                           // log::info!("Ending {} with \"{}\"", info, e);
+                            // log::info!("Ending {} with \"{}\"", info, e);
                         }
                         log::trace!("Session count {}", TASK_COUNT.fetch_sub(1, Relaxed) - 1);
                     });
@@ -371,7 +370,7 @@ where
                         tokio::spawn(async move {
                             let ty = args.proxy.proxy_type;
                             if let Err(err) = handle_udp_associate_session(udp, ty, proxy_handler, socket_queue, ipv6_enabled).await {
-                              //  log::info!("Ending {} with \"{}\"", info, err);
+                                //  log::info!("Ending {} with \"{}\"", info, err);
                             }
                             log::trace!("Session count {}", TASK_COUNT.fetch_sub(1, Relaxed) - 1);
                         });
@@ -382,12 +381,12 @@ where
                 }
             }
             IpStackStream::UnknownTransport(u) => {
-                let len = u.payload().len();
-              //  log::info!("#0 unhandled transport - Ip Protocol 0x{:02X}, length {}", u.ip_protocol(), len);
+                //let len = u.payload().len();
+                //  log::info!("#0 unhandled transport - Ip Protocol 0x{:02X}, length {}", u.ip_protocol(), len);
                 continue;
             }
             IpStackStream::UnknownNetwork(pkt) => {
-              //  log::info!("#0 unknown transport - {} bytes", pkt.len());
+                //  log::info!("#0 unknown transport - {} bytes", pkt.len());
                 continue;
             }
         }
@@ -478,7 +477,7 @@ async fn handle_tcp_session(
             r
         },
     );
-   // log::info!("Ending {} with {:?}", session_info, res);
+    // log::info!("Ending {} with {:?}", session_info, res);
 
     Ok(())
 }
@@ -690,7 +689,7 @@ async fn handle_udp_associate_session(
         }
     }
 
-  //  log::info!("Ending {}", session_info);
+    //  log::info!("Ending {}", session_info);
 
     Ok(())
 }
@@ -782,7 +781,7 @@ async fn handle_dns_over_tcp_session(
         }
     }
 
-   // log::info!("Ending {}", session_info);
+    // log::info!("Ending {}", session_info);
 
     Ok(())
 }

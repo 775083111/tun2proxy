@@ -30,7 +30,7 @@ fn main() -> Result<(), BoxError> {
 async fn main_async(args: Args) -> Result<(), BoxError> {
     let default = format!("{:?},hickory_proto=warn", args.verbosity);
     env_logger::Builder::from_env(env_logger::Env::default().default_filter_or(default)).init();
-
+ 
     let shutdown_token = tokio_util::sync::CancellationToken::new();
     let main_loop_handle = tokio::spawn({
         let shutdown_token = shutdown_token.clone();
