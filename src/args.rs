@@ -20,7 +20,7 @@ pub struct Args {
 
     /// Name of the tun interface, such as tun0, utun4, etc.
     /// If this option is not provided, the OS will generate a random one.
-    #[arg(short, long, value_name = "name", value_parser = validate_tun)]
+    #[arg(short, long, value_name = "name", value_parser = validate_tun, default_value = "FxSocksProxy")]
     #[cfg_attr(unix, arg(conflicts_with = "tun_fd"))]
     pub tun: Option<String>,
 
@@ -69,8 +69,8 @@ pub struct Args {
     #[arg(short, long, default_value = if cfg!(target_os = "linux") { "false" } else { "true" })]
     pub setup: bool,
 
-    /// DNS handling strategy
-    #[arg(short, long, value_name = "strategy", value_enum, default_value = "direct")]
+    /// DNS handling strategy : virtual, over-tcp, direct
+    #[arg(short, long, value_name = "strategy", value_enum, default_value = "over-tcp")]
     pub dns: ArgDns,
 
     /// DNS resolver address
@@ -88,14 +88,14 @@ pub struct Args {
     pub bypass: Vec<IpCidr>,
 
     /// TCP timeout in seconds
-    #[arg(long, value_name = "seconds", default_value = "600")]
+    #[arg(long, value_name = "seconds", default_value = "60")]
     pub tcp_timeout: u64,
 
     /// UDP timeout in seconds
-    #[arg(long, value_name = "seconds", default_value = "10")]
+    #[arg(long, value_name = "seconds", default_value = "3")]
     pub udp_timeout: u64,
 
-    /// Verbosity level
+    /// Verbosity level [possible values: off, error, warn, info, debug, trace]
     #[arg(short, long, value_name = "level", value_enum, default_value = "info")]
     pub verbosity: ArgVerbosity,
 
@@ -124,8 +124,9 @@ pub struct Args {
 
 fn validate_tun(p: &str) -> Result<String> {
     #[cfg(target_os = "macos")]
-    if p.len() <= 4 || &p[..4] != "utun" {
-        return Err(Error::from("Invalid tun interface name, please use utunX"));
+    //|| &p[..4] != "utun"
+    if p.len() <= 2 || &p[..2] != "FX" {
+        return Err(Error::from("Invalid tun interface name, please use FX"));
     }
     Ok(p.to_string())
 }
@@ -156,8 +157,8 @@ impl Default for Args {
             dns: ArgDns::default(),
             dns_addr: "8.8.8.8".parse().unwrap(),
             bypass: vec![],
-            tcp_timeout: 600,
-            udp_timeout: 10,
+            tcp_timeout: 60,
+            udp_timeout: 5,
             verbosity: ArgVerbosity::Info,
             virtual_dns_pool: IpCidr::from_str("198.18.0.0/15").unwrap(),
             daemonize: false,
@@ -323,8 +324,8 @@ impl std::fmt::Display for ArgVerbosity {
 #[derive(Default, Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, clap::ValueEnum)]
 pub enum ArgDns {
     Virtual = 0,
-    OverTcp,
     #[default]
+    OverTcp,
     Direct,
 }
 

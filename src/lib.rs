@@ -359,7 +359,7 @@ where
                             None => dst.into(),
                         };
                         if let Err(e) = handle_udp_gateway_session(udp, udpgw, &dst_addr, proxy_handler, queue, ipv6_enabled).await {
-                            log::info!("Ending {} with \"{}\"", info, e);
+                           // log::info!("Ending {} with \"{}\"", info, e);
                         }
                         log::trace!("Session count {}", TASK_COUNT.fetch_sub(1, Relaxed) - 1);
                     });
@@ -371,7 +371,7 @@ where
                         tokio::spawn(async move {
                             let ty = args.proxy.proxy_type;
                             if let Err(err) = handle_udp_associate_session(udp, ty, proxy_handler, socket_queue, ipv6_enabled).await {
-                                log::info!("Ending {} with \"{}\"", info, err);
+                              //  log::info!("Ending {} with \"{}\"", info, err);
                             }
                             log::trace!("Session count {}", TASK_COUNT.fetch_sub(1, Relaxed) - 1);
                         });
@@ -383,11 +383,11 @@ where
             }
             IpStackStream::UnknownTransport(u) => {
                 let len = u.payload().len();
-                log::info!("#0 unhandled transport - Ip Protocol 0x{:02X}, length {}", u.ip_protocol(), len);
+              //  log::info!("#0 unhandled transport - Ip Protocol 0x{:02X}, length {}", u.ip_protocol(), len);
                 continue;
             }
             IpStackStream::UnknownNetwork(pkt) => {
-                log::info!("#0 unknown transport - {} bytes", pkt.len());
+              //  log::info!("#0 unknown transport - {} bytes", pkt.len());
                 continue;
             }
         }
@@ -478,7 +478,7 @@ async fn handle_tcp_session(
             r
         },
     );
-    log::info!("Ending {} with {:?}", session_info, res);
+   // log::info!("Ending {} with {:?}", session_info, res);
 
     Ok(())
 }
@@ -528,19 +528,19 @@ async fn handle_udp_gateway_session(
             len = udp_stack.read(&mut tmp_buf) => {
                 let read_len = match len {
                     Ok(0) => {
-                        log::info!("[UdpGw] Ending {} <> {}", &tcp_local_addr, udp_dst);
+                       // log::info!("[UdpGw] Ending {} <> {}", &tcp_local_addr, udp_dst);
                         break;
                     }
                     Ok(n) => n,
                     Err(e) => {
-                        log::info!("[UdpGw] Ending {} <> {} with recv_udp_packet {}", &tcp_local_addr, udp_dst, e);
+                     //   log::info!("[UdpGw] Ending {} <> {} with recv_udp_packet {}", &tcp_local_addr, udp_dst, e);
                         break;
                     }
                 };
                 crate::traffic_status::traffic_status_update(read_len, 0)?;
                 let new_id = stream.new_id();
                 if let Err(e) = UdpGwClient::send_udpgw_packet(ipv6_enabled, &tmp_buf[0..read_len], udp_dst, new_id, &mut writer).await {
-                    log::info!("[UdpGw] Ending {} <> {} with send_udpgw_packet {}", &tcp_local_addr, udp_dst, e);
+                  //  log::info!("[UdpGw] Ending {} <> {} with send_udpgw_packet {}", &tcp_local_addr, udp_dst, e);
                     break;
                 }
                 log::debug!("[UdpGw] {} -> {} send len {}", &tcp_local_addr, udp_dst, read_len);
@@ -557,7 +557,7 @@ async fn handle_udp_gateway_session(
                         }
                         //server udp may be timeout,can continue to receive udp data?
                         UdpGwResponse::Error => {
-                            log::info!("[UdpGw] Ending {} <> {} with recv udp error",  &tcp_local_addr, udp_dst);
+                         //   log::info!("[UdpGw] Ending {} <> {} with recv udp error",  &tcp_local_addr, udp_dst);
                             stream.update_activity();
                             continue;
                         }
@@ -690,7 +690,7 @@ async fn handle_udp_associate_session(
         }
     }
 
-    log::info!("Ending {}", session_info);
+  //  log::info!("Ending {}", session_info);
 
     Ok(())
 }
@@ -782,7 +782,7 @@ async fn handle_dns_over_tcp_session(
         }
     }
 
-    log::info!("Ending {}", session_info);
+   // log::info!("Ending {}", session_info);
 
     Ok(())
 }

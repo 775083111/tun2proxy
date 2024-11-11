@@ -17,12 +17,12 @@ pub fn mobile_run(args: Args, tun_mtu: u16, _packet_information: bool) -> c_int 
     {
         if let Ok(mut lock) = TUN_QUIT.lock() {
             if lock.is_some() {
-                log::error!("tun2proxy already started");
+                log::error!("proxy already started");
                 return -1;
             }
             *lock = Some(shutdown_token.clone());
         } else {
-            log::error!("failed to lock tun2proxy quit token");
+            log::error!("failed to lock proxy quit token");
             return -2;
         }
     }
@@ -63,7 +63,7 @@ pub fn mobile_run(args: Args, tun_mtu: u16, _packet_information: bool) -> c_int 
         Ok(rt) => match rt.block_on(block) {
             Ok(_) => 0,
             Err(e) => {
-                log::error!("failed to run tun2proxy with error: {:?}", e);
+                log::error!("failed to run proxy with error: {:?}", e);
                 -2
             }
         },
