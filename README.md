@@ -1,3 +1,25 @@
+# 使用说明
+```
+curl ipinfo.io
+34.117.59.81
+
+### 启动默认就是是全局代理,--dns over-tcp 必须加
+
+.\tun2proxy-bin --proxy socks5://kgwea:kgwea@43.132.206.68:123456  --dns over-tcp
+
+### 修改这条永久路由 跃点值原来是 1  , 关闭回自己删除 但每次都必须修改, 因为下面指定的不走代理的地址都是1 可能出问题
+route -p CHANGE 0.0.0.0 MASK 0.0.0.0 10.0.0.1 METRIC 10
+
+
+### 指定地址不走代理 只初始化一次 可以通过for 循环写入
+route -p ADD 192.168.68.0/24  192.168.68.1 METRIC 1 
+route -p ADD 34.117.59.81/32  192.168.68.1 METRIC 1
+
+### 修复网络异常,添加一条默认网关
+route -p ADD 0.0.0.0/0  192.168.68.1 METRIC 100
+
+```
+
 # tun2proxy
 A tunnel interface for HTTP and SOCKS proxies on Linux, Android, macOS, iOS and Windows.
 
