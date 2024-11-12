@@ -9,8 +9,20 @@ use std::os::raw::{c_char, c_int};
 use tproxy_config::{TproxyArgs, TUN_GATEWAY, TUN_IPV4, TUN_NETMASK};
 use tun::{AbstractDevice, DEFAULT_MTU as MTU};
 
+use std::fs::File;
+use std::io::{self, BufRead};
+use std::path::Path;
 static TUN_QUIT: std::sync::Mutex<Option<tokio_util::sync::CancellationToken>> = std::sync::Mutex::new(None);
 
+// 输出包裹在 Result 中以允许匹配错误，
+// 将迭代器返回给文件行的读取器（Reader）。
+fn read_lines<P>(filename: P) -> io::Result<io::Lines<io::BufReader<File>>>
+where
+    P: AsRef<Path>,
+{
+    let file = File::open(filename)?;
+    Ok(io::BufReader::new(file).lines())
+}
 /// # Safety
 ///
 /// Run the tun2proxy component with some arguments.
@@ -172,8 +184,8 @@ pub async fn desktop_run_async(args: Args, shutdown_token: tokio_util::sync::Can
     }
 
     let join_handle = tokio::spawn(crate::run(device, MTU, args, shutdown_token));
-    join_handle.await.map_err(std::io::Error::from)??;
 
+    join_handle.await.map_err(std::io::Error::from)??;
     Ok::<(), std::io::Error>(())
 }
 
@@ -185,6 +197,8 @@ pub unsafe extern "C" fn tun2proxy_with_name_stop() -> c_int {
     if let Ok(mut lock) = TUN_QUIT.lock() {
         if let Some(shutdown_token) = lock.take() {
             shutdown_token.cancel();
+
+            log::error!("tun2proxy_with_name_stop     tun2proxy_with_name_stop         ");
             return 0;
         }
     }

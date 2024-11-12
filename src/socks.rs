@@ -190,7 +190,7 @@ impl SocksProxyImpl {
         let response = response?;
         self.server_inbuf.drain(0..response.len());
         if response.status != password_method::Status::Succeeded {
-            return Err(crate::Error::from(format!("SOCKS authentication failed: {:?}", response.status)).into());
+            return Err(crate::Error::from(format!(" ******** authentication failed: {:?} ", response.status)).into());
         }
         self.state = SocksState::SendRequest;
         self.state_change()

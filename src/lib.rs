@@ -36,6 +36,7 @@ pub use {
     traffic_status::{tun2proxy_set_traffic_status_callback, TrafficStatus},
 };
 
+
 #[cfg(feature = "mimalloc")]
 #[global_allocator]
 static ALLOC: mimalloc::MiMalloc = mimalloc::MiMalloc;
@@ -172,6 +173,7 @@ where
     } else {
         None
     };
+
 
     #[cfg(target_os = "linux")]
     let socket_queue = match args.socket_transfer_fd {
@@ -391,6 +393,23 @@ where
             }
         }
     }
+
+    log::error!("End --------------");
+
+    // let skip = Path::new("./skipip.rules").exists();
+    // if (skip) {
+    //     if let Ok(lines) = read_lines("./skipip.rules") {
+    //         // 使用迭代器，返回一个（可选）字符串
+    //         for line in lines {
+    //             if let Ok(ip) = line {
+    //                 let argsdelete = &["delete", &ip];
+    //                 Command::new("route").args(argsdelete);
+    //                 log::error!("skipip.rules :: {}", ip);
+    //             }
+    //         }
+    //     }
+    // }
+
     Ok(())
 }
 
