@@ -65,7 +65,6 @@ async fn main_async(args: Args) -> Result<(), BoxError> {
         shutdown_token.cancel();
     })
     .await;
-
     main_loop_handle.await?;
 
     if ctrlc_fired.load(std::sync::atomic::Ordering::SeqCst) {

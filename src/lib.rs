@@ -162,8 +162,8 @@ pub async fn run<D>(device: D, mtu: u16, args: Args, shutdown_token: Cancellatio
 where
     D: AsyncRead + AsyncWrite + Unpin + Send + 'static,
 {
-    log::info!("--- proxy is starting ,use [Crtl + C] exit ---");
-
+    print!("{esc}c", esc = 27 as char);
+    println!("--- proxy is starting , Crtl + C  exit ---");
     let server_addr = args.proxy.addr;
     let key = args.proxy.credentials.clone();
     let dns_addr = args.dns_addr;
@@ -393,23 +393,6 @@ where
             }
         }
     }
-
-    log::error!("End --------------");
-
-    // let skip = Path::new("./skipip.rules").exists();
-    // if (skip) {
-    //     if let Ok(lines) = read_lines("./skipip.rules") {
-    //         // 使用迭代器，返回一个（可选）字符串
-    //         for line in lines {
-    //             if let Ok(ip) = line {
-    //                 let argsdelete = &["delete", &ip];
-    //                 Command::new("route").args(argsdelete);
-    //                 log::error!("skipip.rules :: {}", ip);
-    //             }
-    //         }
-    //     }
-    // }
-
     Ok(())
 }
 
