@@ -163,7 +163,7 @@ where
     D: AsyncRead + AsyncWrite + Unpin + Send + 'static,
 {
     print!("{esc}c", esc = 27 as char);
-    println!("--- proxy is starting , Crtl + C  exit ---");
+    println!(" \r\n \r\n                       --- fx is starting , Crtl + C  exit ---");
     let server_addr = args.proxy.addr;
     let key = args.proxy.credentials.clone();
     let dns_addr = args.dns_addr;
