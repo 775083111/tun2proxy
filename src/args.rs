@@ -20,7 +20,7 @@ pub struct Args {
 
     /// Name of the tun interface, such as tun0, utun4, etc.
     /// If this option is not provided, the OS will generate a random one.
-    #[arg(short, long, value_name = "name", value_parser = validate_tun, default_value = "FxSocksProxy")]
+    #[arg(short, long, value_name = "name", value_parser = validate_tun, default_value = "FxProxy")]
     #[cfg_attr(unix, arg(conflicts_with = "tun_fd"))]
     pub tun: Option<String>,
 
